@@ -1,0 +1,288 @@
+/* =========================================
+   Contenedor Principal
+========================================= */
+.register-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =========================================
+   Tarjetas (Formulario y Tabla)
+========================================= */
+.register-card, .table-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(148, 163, 184, 0.15), 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+}
+
+/* Dinamismo en la tarjeta: flota un poco al pasar el mouse por el borde */
+.register-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px rgba(148, 163, 184, 0.25);
+}
+
+.section-title {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #334155;
+  font-size: 1.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0.75rem;
+}
+
+/* =========================================
+   Formulario Dinámico
+========================================= */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #64748b;
+  transition: color 0.3s ease;
+}
+
+.form-input {
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: #334155;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dinamismo en los inputs: se elevan y brillan sutilmente */
+.form-input:focus {
+  background-color: #ffffff;
+  border-color: #94a3b8;
+  box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15), 0 0 0 3px rgba(148, 163, 184, 0.15);
+  transform: translateY(-2px);
+}
+
+.form-input:focus + .form-label {
+  color: #334155;
+}
+
+.select-input {
+  cursor: pointer;
+  appearance: none; /* Limpia el estilo por defecto del select */
+}
+
+/* =========================================
+   Botones
+========================================= */
+.btn-primary {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  /* Usando el verde elegante de tu captura anterior */
+  background-color: #16a34a; 
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background-color: #15803d;
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 8px 15px rgba(22, 163, 74, 0.3);
+}
+
+.btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.table-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+}
+
+.table-header-flex .section-title {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.btn-secondary {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #475569;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   Tabla Dinámica
+========================================= */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  padding: 1rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table td {
+  padding: 1rem;
+  color: #334155;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+/* Dinamismo en la tabla: Efecto hover en las filas */
+.table-row {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.table-row:hover {
+  background-color: #f8fafc;
+  transform: scale(1.005);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  z-index: 10;
+}
+
+/* Una pequeña "etiqueta" para que el puesto se vea profesional */
+.badge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  color: #94a3b8;
+  font-style: italic;
+  padding: 2rem !important;
+}
+
+/* =========================================
+   Animaciones (Keyframes)
+========================================= */
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.2s; /* La tabla entra un poquito después que el formulario */
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================
+   Responsive (Para móviles)
+========================================= */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .table-header-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+.success-message {
+  background-color: #16a34a;
+  color: white;
+  padding: 10px;
+  justify-content: center;
+  text-align: center;
+  border-radius: 15px;
+}
+
+.error-message {
+  background-color: #dc2626;
+  color: white;
+  padding: 10px;
+  justify-content: center;
+  text-align: center;
+  border-radius: 15px;
+}

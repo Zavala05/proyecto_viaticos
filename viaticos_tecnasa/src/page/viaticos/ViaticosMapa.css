@@ -1,0 +1,201 @@
+/* ViaticosMapa.css */
+*{
+    color:black
+}
+
+
+.viaticos-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #334155;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.viaticos-header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+
+.viaticos-header h1 {
+  color: #0f172a;
+  margin-bottom: 4px;
+  font-size: 24px;
+}
+
+.viaticos-header p {
+  color: #64748b;
+  margin-top: 0;
+  font-size: 14px;
+}
+
+/* Alertas */
+.alert-warning {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.alert-warning ul {
+  margin: 8px 0 0 0;
+  padding-left: 20px;
+}
+
+/* Botones */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #1d4ed8;
+}
+
+.btn-success {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #15803d;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.btn-outline:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: white;
+  margin-left: auto; /* Empuja el botón de logout a la derecha */
+}
+
+.btn-danger:hover {
+  background-color: #b91c1c;
+}
+
+/* Formularios genéricos */
+input, select {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fff;
+}
+
+input:focus, select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Diseño Responsivo (Para que se vea bien en celulares) */
+@media (max-width: 768px) {
+  .seccion-formulario > div {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  
+  .resultados-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .totales-card > div {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  
+  .btn-danger {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .btn-group {
+    flex-direction: column;
+  }
+}
+
+/* Estilos para la Tabla de Viáticos */
+.tabla-moderna {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.tabla-moderna th {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e2e8f0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.tabla-moderna td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  font-size: 15px;
+  vertical-align: middle;
+}
+
+.tabla-moderna tbody tr:hover {
+  background-color: #f8fafc;
+  transition: background-color 0.2s ease;
+}
+
+/*estilos botones*/
+.btn-group{
+
+  text-align:center;
+}
+
+.btn-group .btn-successl{
+  background-color: rgba(0, 164, 0, 0.836);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-group .btn-successl:hover {
+  background-color: rgb(63, 129, 243);
+  transition: all 0.3s ease;
+}

@@ -1,0 +1,67 @@
+/* Contenedor principal */
+.viaticos-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto; /* Permite scroll horizontal en móviles */
+}
+
+/* Estilo del título */
+.viaticos-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #007bff;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* Estilo de la tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  min-width: 800px; /* Asegura que no se aplaste en pantallas pequeñas */
+}
+
+/* Cabecera de la tabla */
+thead {
+  background-color: #007bff;
+  color: white;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Efecto hover en filas */
+tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* Zebra striping (filas alternas) para mejor lectura */
+tbody tr:nth-child(even) {
+  background-color: #fcfcfc;
+}
+
+th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+tbody{
+  color: black;
+}
+
+
+.viaticos-container{
+  color:black
+}

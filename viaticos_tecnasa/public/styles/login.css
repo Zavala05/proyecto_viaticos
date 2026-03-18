@@ -1,0 +1,122 @@
+/* =========================================
+   Contenedor Principal y Fondo
+========================================= */
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Un gris súper claro con un toque azulado, da sensación de limpieza */
+  background-color: #f0f2f5; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+/* =========================================
+   Tarjeta de Login (El formulario en sí)
+========================================= */
+.login-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 360px;
+  padding: 3rem 2.5rem;
+  border-radius: 16px;
+  /* Sombra suave y ligeramente teñida de gris/azul para no ser agresiva */
+  box-shadow: 0 10px 30px rgba(148, 163, 184, 0.25), 
+              0 1px 3px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  /* Una pequeña transición por si quieres animar la entrada luego */
+  transition: transform 0.3s ease;
+}
+
+/* =========================================
+   Tipografía
+========================================= */
+.login-title {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #334155; /* Gris oscuro elegante, más suave que el negro puro */
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+/* =========================================
+   Inputs (Campos de texto)
+========================================= */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.input-group {
+  width: 100%;
+}
+
+.login-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  color: #475569;
+  background-color: #f8fafc; /* Fondo casi blanco para el input */
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s ease; /* Hace que el cambio al hacer focus sea suave */
+}
+
+/* Efecto al hacer clic en el input */
+.login-input:focus {
+  background-color: #ffffff;
+  border-color: #94a3b8;
+  /* Un "anillo" suave alrededor del input en lugar de la línea fea por defecto */
+  box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15); 
+}
+
+.login-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* =========================================
+   Botón de Acción
+========================================= */
+.login-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #475569; /* Gris pizarra medio */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(71, 85, 105, 0.15);
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+}
+
+/* Efecto al pasar el mouse (Hover) */
+.login-btn:hover {
+  background-color: #334155; /* Se oscurece un poco */
+  box-shadow: 0 6px 12px rgba(71, 85, 105, 0.25);
+  transform: translateY(-2px); /* El botón "flota" sutilmente hacia arriba */
+}
+
+/* Efecto al hacer clic (Active) */
+.login-btn:active {
+  transform: translateY(0); /* Vuelve a bajar */
+  box-shadow: 0 2px 4px rgba(71, 85, 105, 0.15);
+}
+
+.error-message
+{background-color: rgb(209, 74, 74);
+color: rgb(255, 244, 244);
+padding: 10px;
+border-radius: 10px;
+
+
+}
