@@ -52,53 +52,7 @@ export default function FormularioDatos({ state, setters, handlers }) {
        
       </div>
 
-      {/* 2. Fila de Origen, Destino y Botón del Mapa */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "16px", alignItems: "end", marginBottom: "16px" }}>
-        <div>
-          <label style={{ display: "block", marginBottom: 8 }}>Origen</label>
-          <select
-            value={state.origen}
-            onChange={(e) => setters.setOrigen(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-            required
-          >
-            <option value="Tegucigalpa">Tegucigalpa</option>
-            <option value="San Pedro Sula">San Pedro Sula</option>
-          </select>
-        </div>
-        
-        <div>
-          <label style={{ display: "block", marginBottom: 8 }}>Destino (ATM)</label>
-          <select
-            value={state.destino}
-            onChange={(e) => setters.setDestino(e.target.value)}
-            style={{ width: "100%", padding: 8 }}
-            required
-          >
-            <option value="" disabled>-- Seleccione un ATM de destino --</option>
-            {state.atms.map((atm) => (
-              <option key={atm.id} value={atm.nombre}>
-                {atm.nombre}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button
-          onClick={handlers.calcularRuta}
-          disabled={state.cargando}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#0f172a",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: state.cargando ? "wait" : "pointer",
-          }}
-        >
-          {state.cargando ? "Calculando..." : "Trazar Ruta"}
-        </button>
-      </div>
+      
 
       {/* 3. Fila de Fechas y Costos Manuales */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "16px", alignItems: "end", marginTop: "16px" }}>
@@ -165,6 +119,56 @@ export default function FormularioDatos({ state, setters, handlers }) {
             style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
           />
         </div>
+
+
+      </div>
+
+      {/* 2. Fila de Origen, Destino y Botón del Mapa */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "16px", alignItems: "end", marginBottom: "16px" }}>
+        <div>
+          <label style={{ display: "block", marginBottom: 8 }}>Origen</label>
+          <select
+            value={state.origen}
+            onChange={(e) => setters.setOrigen(e.target.value)}
+            style={{ width: "100%", padding: 8 }}
+            required
+          >
+            <option value="Tegucigalpa">Tegucigalpa</option>
+            <option value="San Pedro Sula">San Pedro Sula</option>
+          </select>
+        </div>
+        
+        <div>
+          <label style={{ display: "block", marginBottom: 8 }}>Destino (ATM)</label>
+          <select
+            value={state.destino}
+            onChange={(e) => setters.setDestino(e.target.value)}
+            style={{ width: "100%", padding: 8 }}
+            required
+          >
+            <option value="" disabled>-- Seleccione un ATM de destino --</option>
+            {state.atms.map((atm) => (
+              <option key={atm.id} value={atm.nombre}>
+                {atm.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <button
+          onClick={handlers.calcularRuta}
+          disabled={state.cargando}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#0f172a",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: state.cargando ? "wait" : "pointer",
+          }}
+        >
+          {state.cargando ? "Calculando..." : "Trazar Ruta"}
+        </button>
       </div>
     </div>
   );

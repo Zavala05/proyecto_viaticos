@@ -91,11 +91,13 @@ export default function ViaticosMapa({ setUser, User }) {
                 handlers={handlers} 
               />
 
-              {/* Mapa */}
-              <MapaHonduras 
-                rutaCoords={state.rutaCoords} 
-                peajesCruzados={state.peajesCruzados} 
-              />
+              {/* Mapa (Solo se muestra si ya se trazó la ruta) */}
+              {state.rutaCoords.length > 0 && (
+                <MapaHonduras 
+                  rutaCoords={state.rutaCoords} 
+                  peajesCruzados={state.peajesCruzados} 
+                />
+              )}
 
               {/* Resultados */}
               <PanelResultados 
