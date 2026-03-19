@@ -26,61 +26,13 @@ export default function ViaticosMapa({ setUser, User }) {
         <p>Calculo de Viáticos TECNASA</p>
       </div>
 
-      {/* Alertas de disponibilidad */}
-      {state.conflictosDisponibilidad.length > 0 && (
-        <div className="alert-warning">
-          <h3 style={{ marginTop: 0 }}>⚠️ Conflicto de Disponibilidad</h3>
-          <p><strong>El empleado "{state.empleado}"</strong> ya tiene asignado un viaje:</p>
-          <ul>
-            {state.conflictosDisponibilidad.map((conflicto, idx) => (
-              <li key={idx}>
-                <strong>Cliente:</strong> {conflicto.cliente} | 
-                <strong> Salida:</strong> {conflicto.fecha_salida} | 
-                <strong> Regreso:</strong> {conflicto.fecha_regreso}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {state.verificandoDisponibilidad && (
-        <div style={{ marginTop: "10px", color: "#64748b", fontSize: "13px" }}>
-          ⏳ Verificando disponibilidad del empleado...
-        </div>
-      )}
-
-      {/* 1. Formulario Superior */}
-      <FormularioDatos 
-        state={state} 
-        setters={setters} 
-        handlers={handlers} 
-      />
-
-      {/* 2. Mapa */}
-      <MapaHonduras 
-        rutaCoords={state.rutaCoords} 
-        peajesCruzados={state.peajesCruzados} 
-      />
-
-      {/* 3. Resultados y Cálculos */}
-      <PanelResultados 
-        state={state} 
-        setters={setters} 
-        calculos={calculos} 
-      />
-      <TablaViaticos />
-
-      {/* 4. Botones de Acción */}
-      <div className="btn-group">
+      {/* 1. Botones de Acción (Ahora arriba) */}
+      <div className="btn-group" style={{ marginBottom: "20px", borderTop: "none", borderBottom: "1px solid #e2e8f0", paddingBottom: "20px" }}>
         <button 
           className="btn btn-successl"
-          onClick={handlers.registrarViatico}
-          disabled={state.cargandoEdicion || state.conflictosDisponibilidad.length > 0}
+          onClick={() => setters.toggleModal(true)}
         >
-          {state.cargandoEdicion ? "Cargando..." : (viaticosId ? "Actualizar viático" : "Registrar viático")}
-        </button>
-        <button className="btn btn-success" onClick={handlers.handleExport}>
-          Exportar a Excel
+          {state.isEditing ? "Editar viático seleccionado" : "Registrar nuevo viático"}
         </button>
         <button className="btn btn-outline" onClick={() => navigate("/admin/registrarusuario")}>
           Registrar Empleado
@@ -96,6 +48,85 @@ export default function ViaticosMapa({ setUser, User }) {
         </button>
       </div>
 
+      {/* 2. Tabla de Viáticos (Debajo de los botones) */}
+      <TablaViaticos />
+
+      {/* 3. Modal de Formulario, Mapa y Resultados */}
+      {state.showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>{state.isEditing ? "Editar Viático" : "Nuevo Registro de Viático"}</h2>
+              <button className="modal-close" onClick={handlers.handleCloseModal}>&times;</button>
+            </div>
+            
+            <div className="modal-body">
+              {/* Alertas de disponibilidad */}
+              {state.conflictosDisponibilidad.length > 0 && (
+                <div className="alert-warning">
+                  <h3 style={{ marginTop: 0 }}>⚠️ Conflicto de Disponibilidad</h3>
+                  <p><strong>El empleado "{state.empleado}"</strong> ya tiene asignado un viaje:</p>
+                  <ul>
+                    {state.conflictosDisponibilidad.map((conflicto, idx) => (
+                      <li key={idx}>
+                        <strong>Cliente:</strong> {conflicto.cliente} | 
+                        <strong> Salida:</strong> {conflicto.fecha_salida} | 
+                        <strong> Regreso:</strong> {conflicto.fecha_regreso}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {state.verificandoDisponibilidad && (
+                <div style={{ marginBottom: "15px", color: "#64748b", fontSize: "13px" }}>
+                  ⏳ Verificando disponibilidad del empleado...
+                </div>
+              )}
+
+              {/* Formulario */}
+              <FormularioDatos 
+                state={state} 
+                setters={setters} 
+                handlers={handlers} 
+              />
+
+              {/* Mapa */}
+              <MapaHonduras 
+                rutaCoords={state.rutaCoords} 
+                peajesCruzados={state.peajesCruzados} 
+              />
+
+              {/* Resultados */}
+              <PanelResultados 
+                state={state} 
+                setters={setters} 
+                calculos={calculos} 
+              />
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn btn-outline" onClick={handlers.handleCloseModal}>
+                Cancelar
+              </button>
+              <button className="btn btn-success" onClick={handlers.handleExport}>
+                Exportar a Excel
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={async () => {
+                  await handlers.registrarViatico();
+                  // Si no hay errores, cerramos el modal (esto dependería de si registrarViatico es exitoso)
+                  // Por ahora lo dejamos que el usuario decida o que el Hook lo maneje
+                }}
+                disabled={state.cargandoEdicion || state.conflictosDisponibilidad.length > 0}
+              >
+                {state.cargandoEdicion ? "Cargando..." : (state.isEditing ? "Actualizar viático" : "Guardar viático")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

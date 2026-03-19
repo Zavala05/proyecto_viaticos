@@ -44,6 +44,7 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   const [costoPeajes, setCostoPeajes] = useState(0);
   const [distanciaTotal, setDistanciaTotal] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   
   const [desayunosManual, setDesayunosManual] = useState(0);
   const [almuerzosManual, setAlmuerzosManual] = useState(0);
@@ -94,14 +95,31 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   // 2. Cargar viático para edición
   useEffect(() => {
     if (isEditing && viaticosId) {
+      setShowModal(true); // Abrimos el modal si estamos editando
+      const toInputDateTime = (v) => {
+        if (!v) return "";
+        if (typeof v === "string") {
+          let s = v.trim().replace(" ", "T").replace(/Z$/, "");
+          if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) return s.substring(0, 16);
+        }
+        const d = new Date(v);
+        if (Number.isNaN(d.getTime())) return "";
+        const pad = (n) => String(n).padStart(2, "0");
+        const y = d.getFullYear();
+        const m = pad(d.getMonth() + 1);
+        const day = pad(d.getDate());
+        const hh = pad(d.getHours());
+        const mm = pad(d.getMinutes());
+        return `${y}-${m}-${day}T${hh}:${mm}`;
+      };
       const cargarViatico = async () => {
         try {
           const data = await ObtenerViaticoById(viaticosId);
           if (data) {
             setEmpleado(data.nombre_empleado || ""); setCliente(data.cliente || ""); setMotivoViaje(data.motivo_viaje || "");
             setOrigen(data.origen || "Tegucigalpa"); setDestino(data.destino || "");
-            setSalida(data.fecha_salida ? data.fecha_salida.replace(" ", "T").slice(0, 16) : "");
-            setRegreso(data.fecha_regreso ? data.fecha_regreso.replace(" ", "T").slice(0, 16) : "");
+            setSalida(toInputDateTime(data.fecha_salida));
+            setRegreso(toInputDateTime(data.fecha_regreso));
             setCostoHospedaje(data.costo_hospedaje || ""); setCombustible(data.costo_combustible || "");
             setImprevistos(data.costo_imprevistos || "");
             setDesayunosManual(data.desayunos_count || 0); setAlmuerzosManual(data.almuerzos_count || 0);
@@ -252,13 +270,18 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
 
       if (isEditing) {
         const response = await ActualizarViatico(viaticosId, payload);
-        if (onSuccess) onSuccess(); 
-        else navigate("/admin/viaticos");
+        alert("Viático actualizado correctamente");
+        setShowModal(false);
+        navigate("/admin/viaticos");
       } else {
         const res = await fetch(API_URL, {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });
-        if (res.ok) { alert("Viático registrado"); limpiarFormulario(); } 
+        if (res.ok) { 
+          alert("Viático registrado"); 
+          limpiarFormulario(); 
+          setShowModal(false);
+        } 
         else alert("Error al registrar");
       }
     } catch (err) { alert("Error de red"); }
@@ -267,7 +290,12 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   const handleExport = () => {
     if (!empleado || !cliente) { alert("Rellene Empleado y Cliente para exportar."); return; }
     exportToExcel({
-        nombre_empleado: empleado, cliente, origen, destino, fecha_salida: salida, fecha_regreso: regreso,
+        nombre_empleado: empleado, cliente, origen, destino, motivoViaje: motivoViaje, fecha_salida: salida, fecha_regreso: regreso,
+        desayunos_count: calculos.desayunos,
+        almuerzos_count: calculos.almuerzos,
+        cenas_count: calculos.cenas,
+        noches_count: calculos.noches,
+        costo_hospedaje_diario: Number(costoHospedaje || 0),
         distancia_km: parseFloat((distanciaTotal || "0").replace(" km", "")) || 0,
         costo_peajes: Number(costoPeajes || 0), total_alimentos: calculos.totalAlimentos,
         costo_hospedaje: calculos.totalHospedaje, costo_combustible: calculos.totalCombustible,
@@ -281,6 +309,20 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
     }
   }, [logout]);
 
+  const toggleModal = (val) => {
+    if (val === false && !isEditing) {
+      limpiarFormulario();
+    }
+    setShowModal(val);
+  };
+
+  const handleCloseModal = () => {
+    if (isEditing) {
+      navigate("/admin/viaticos");
+    }
+    toggleModal(false);
+  };
+
   // Retornamos un objeto súper limpio para que la interfaz lo use
   // Retornamos un objeto súper limpio para que la interfaz lo use
   return {
@@ -288,14 +330,14 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
       empleado, cliente, motivoViaje, origen, destino, salida, regreso, contarDesayuno, costoHospedaje,
       combustible, imprevistos, empleados, clientes, atms, cargandoEdicion, 
       conflictosDisponibilidad, verificandoDisponibilidad, rutaCoords, peajesCruzados,
-      costoPeajes, distanciaTotal, cargando, desayunosManual, almuerzosManual, cenasManual, nochesManual, isEditing
+      costoPeajes, distanciaTotal, cargando, desayunosManual, almuerzosManual, cenasManual, nochesManual, isEditing, showModal
     },
     setters: {
       setEmpleado, setCliente, setMotivoViaje, setOrigen, setDestino, setSalida, setRegreso, setContarDesayuno,
       setCostoHospedaje, setCombustible, setImprevistos, setDesayunosManual, setAlmuerzosManual,
-      setCenasManual, setNochesManual, handleCurrencyChange // <-- ¡Aquí agregamos setNochesManual!
+      setCenasManual, setNochesManual, handleCurrencyChange, setShowModal, toggleModal // <-- ¡Aquí agregamos toggleModal!
     },
     calculos,
-    handlers: { calcularRuta, registrarViatico, handleExport, handleLogout }
+    handlers: { calcularRuta, registrarViatico, handleExport, handleLogout, handleCloseModal }
   };
 };

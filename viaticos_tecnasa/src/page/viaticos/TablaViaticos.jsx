@@ -23,9 +23,22 @@ export default function TablaViaticos() {
         cargarViaticos();
     }, []);
 
+    // Función para dar formato normal a la fecha y hora
+    const formatearFecha = (fecha) => {
+        if (!fecha) return "N/A";
+        const fechaObj = new Date(fecha);
+        return fechaObj.toLocaleString('es-HN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true // Cambia a false si prefieres formato 24 horas
+        });
+    };
+
     return (
         <div className="viaticos-container" style={{ maxWidth: "1200px", marginTop: "40px" }}>
-            {/* Agregamos una línea separadora para que se vea limpio debajo de los resultados */}
             <hr style={{ marginBottom: "20px", borderColor: "#e2e8f0" }} />
             
             <div className="viaticos-header">
@@ -56,17 +69,18 @@ export default function TablaViaticos() {
                                         <td>{v.nombre_empleado}</td>
                                         <td>{v.cliente}</td>
                                         <td>{v.origen} ➝ {v.destino}</td>
-                                        <td>{v.fecha_salida ? v.fecha_salida.split(" ")[0] : "N/A"}</td>
-                                        <td>{v.fecha_regreso ? v.fecha_regreso.split(" ")[0] : "N/A"}</td>
+                                        
+                                        {/* APLICAMOS LA FUNCIÓN AQUÍ PARA LA FECHA Y HORA */}
+                                        <td>{formatearFecha(v.fecha_salida)}</td>
+                                        <td>{formatearFecha(v.fecha_regreso)}</td>
+                                        
                                         <td style={{ fontWeight: "bold" }}>L. {v.total_general}</td>
                                         <td>
                                             <button 
                                                 className="btn btn-primary"
                                                 style={{ padding: "6px 12px", fontSize: "13px" }}
                                                 onClick={() => {
-                                                    // 1. Cambiamos la URL para que el Hook superior agarre el ID
                                                     navigate(`/admin/dashboard/editar/${v.id}`);
-                                                    // 2. Deslizamos la pantalla hacia arriba para que el usuario vea el formulario
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                 }}
                                             >
