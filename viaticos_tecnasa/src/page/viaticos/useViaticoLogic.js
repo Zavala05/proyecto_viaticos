@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { parseDateTime, countMeals, countNights } from "./calculos.js";
-import { exportToExcel } from "../../utils/exportToExcel.js";
 import { 
   show, showclients, getAtms, ObtenerViaticoById, 
   ActualizarViatico, VerificarDisponibilidad 
@@ -287,22 +286,6 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
     } catch (err) { alert("Error de red"); }
   };
 
-  const handleExport = () => {
-    if (!empleado || !cliente) { alert("Rellene Empleado y Cliente para exportar."); return; }
-    exportToExcel({
-        nombre_empleado: empleado, cliente, origen, destino, motivoViaje: motivoViaje, fecha_salida: salida, fecha_regreso: regreso,
-        desayunos_count: calculos.desayunos,
-        almuerzos_count: calculos.almuerzos,
-        cenas_count: calculos.cenas,
-        noches_count: calculos.noches,
-        costo_hospedaje_diario: Number(costoHospedaje || 0),
-        distancia_km: parseFloat((distanciaTotal || "0").replace(" km", "")) || 0,
-        costo_peajes: Number(costoPeajes || 0), total_alimentos: calculos.totalAlimentos,
-        costo_hospedaje: calculos.totalHospedaje, costo_combustible: calculos.totalCombustible,
-        costo_imprevistos: calculos.totalImprevistos, total_general: calculos.totalGeneral,
-      }, `Viatico_${cliente}_${new Date().toISOString().split('T')[0]}`);
-  };
-
   const handleLogout = useCallback(() => {
     if (window.confirm("¿Seguro que quieres cerrar sesión?")) {
       logout(); localStorage.clear(); sessionStorage.clear();
@@ -338,6 +321,6 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
       setCenasManual, setNochesManual, handleCurrencyChange, setShowModal, toggleModal // <-- ¡Aquí agregamos toggleModal!
     },
     calculos,
-    handlers: { calcularRuta, registrarViatico, handleExport, handleLogout, handleCloseModal }
+    handlers: { calcularRuta, registrarViatico, handleLogout, handleCloseModal }
   };
 };

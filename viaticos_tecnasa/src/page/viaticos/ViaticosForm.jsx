@@ -63,8 +63,8 @@ export default function ViaticosMapa({ setUser, User }) {
             <div className="modal-body">
               {/* Alertas de disponibilidad */}
               {state.conflictosDisponibilidad.length > 0 && (
-                <div className="alert-warning">
-                  <h3 style={{ marginTop: 0 }}>⚠️ Conflicto de Disponibilidad</h3>
+                <div className="alert-warning">``
+                  <h3 style={{ marginTop: 0 }}>Conflicto de Disponibilidad!</h3>
                   <p><strong>El empleado "{state.empleado}"</strong> ya tiene asignado un viaje:</p>
                   <ul>
                     {state.conflictosDisponibilidad.map((conflicto, idx) => (
@@ -106,14 +106,11 @@ export default function ViaticosMapa({ setUser, User }) {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-outline" onClick={handlers.handleCloseModal}>
+              <button className="btn btn-outlinecancel" onClick={handlers.handleCloseModal}>
                 Cancelar
               </button>
-              <button className="btn btn-success" onClick={handlers.handleExport}>
-                Exportar a Excel
-              </button>
               <button 
-                className="btn btn-primary" 
+                className="btn btn-primarycancel" 
                 onClick={async () => {
                   await handlers.registrarViatico();
                   // Si no hay errores, cerramos el modal (esto dependería de si registrarViatico es exitoso)
@@ -121,7 +118,7 @@ export default function ViaticosMapa({ setUser, User }) {
                 }}
                 disabled={state.cargandoEdicion || state.conflictosDisponibilidad.length > 0}
               >
-                {state.cargandoEdicion ? "Cargando..." : (state.isEditing ? "Actualizar viático" : "Guardar viático")}
+                {state.cargandoEdicion ? "Cargando..." : (state.isEditing ? "Editar" : "Guardar")}
               </button>
             </div>
           </div>

@@ -1,8 +1,7 @@
 /* ViaticosMapa.css */
 *{
-    color:black
+  color:black
 }
-
 
 .viaticos-container {
   max-width: 1100px;
@@ -56,6 +55,7 @@
   margin-top: 24px;
   padding-top: 20px;
   border-top: 1px solid #e2e8f0;
+  text-align:center;
 }
 
 .btn {
@@ -183,13 +183,8 @@ input:focus, select:focus {
   transition: background-color 0.2s ease;
 }
 
-/*estilos botones*/
-.btn-group{
-
-  text-align:center;
-}
-
-.btn-group .btn-successl{
+/* Estilos botones extra */
+.btn-group .btn-successl {
   background-color: rgba(0, 164, 0, 0.836);
   color: white;
   transition: all 0.3s ease;
@@ -261,13 +256,67 @@ input:focus, select:focus {
 }
 
 .modal-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #e2e8f0;
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
   position: sticky;
-  bottom: 0;
-  background: #f8fafc;
+  bottom: 0; /* Asegura que se quede pegado abajo */
+  justify-content: flex-end;
+  padding: 16px 24px; /* Ajustado para que coincida con el header */
+  align-items: center;
+  gap: 12px; /* Añade espacio uniforme entre los botones */
+  background: white; /* Evita que el texto de atrás se vea al hacer scroll */
+  border-top: 1px solid #e2e8f0; /* Línea sutil para separar el footer del cuerpo */
   z-index: 10;
+}
+
+/* La clase .btn-outlinecancel fue eliminada para evitar el conflicto de altura */
+
+.btn-outlinecancel {
+  background-color: transparent;
+  color: #475569; /* Texto gris oscuro */
+  border: 1px solid #cbd5e1; /* Borde gris claro */
+  transition: all 0.2s ease;
+}
+
+.btn-outlinecancel:hover {
+  background-color: #f1f5f9; /* Fondo gris muy claro al pasar el mouse */
+  color: #0f172a; /* Texto casi negro */
+  border-color: #94a3b8; /* Borde un poco más oscuro */
+}
+
+/* Botón Guardar/Actualizar Viático (Verde) */
+.btn-primarycancel {
+  background-color: #16a34a; /* Color verde principal */
+  color: white;
+  border: 1px solid #16a34a; /* Borde del mismo color para que mida exacto igual que el de cancelar */
+  transition: all 0.2s ease;
+}
+
+.btn-primarycancel:hover:not(:disabled) {
+  background-color: #15803d; /* Verde más oscuro al hacer hover */
+  border-color: #15803d;
+}
+
+/* Estado deshabilitado (cuando cargandoEdicion es true o hay conflictos) */
+.btn-primarycancel:disabled {
+  background-color: #9ca3af; /* Gris neutro */
+  border-color: #9ca3af;
+  color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/*Estilos de la tabla de botones de tabla viaticos*/
+.btn-actionsviaticos {
+  height: 45px;
+  width: 85px;
+  color: white;
+  background-color: #027a2e;
+  transition: all 0.3s ease;
+}
+
+.btn-actionsviaticos:hover {
+  background-color: #b7d7a1;
+  transition: all 0.3s ease;
+  color: rgb(0, 0, 0);
+
 }

@@ -12,6 +12,25 @@ const styles = {
 
 function formatearFechaHora(fechaString) {
   if (!fechaString) return '';
+  
+  // Intentamos parsear manualmente para evitar desfases de zona horaria (UTC vs Local)
+  try {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/;
+    const match = String(fechaString).match(regex);
+    
+    if (match) {
+      const [_, anio, mes, dia, hora24, min] = match;
+      let hora = parseInt(hora24);
+      const ampm = hora >= 12 ? 'P.M' : 'A.M';
+      hora = hora % 12;
+      hora = hora ? hora : 12;
+      return `${hora}:${min} ${ampm} ${dia}-${mes}-${anio}`;
+    }
+  } catch (e) {
+    console.error("Error parseando fecha en excel:", e);
+  }
+
+  // Fallback si el regex falla
   const date = new Date(fechaString);
   if (isNaN(date.getTime())) return fechaString; 
   let horas = date.getHours();
