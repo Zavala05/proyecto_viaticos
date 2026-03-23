@@ -43,12 +43,14 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   const [costoPeajes, setCostoPeajes] = useState(0);
   const [distanciaTotal, setDistanciaTotal] = useState("");
   const [cargando, setCargando] = useState(false);
+  const [cargandoRegistro, setCargandoRegistro] = useState(false);
   const [showModal, setShowModal] = useState(false);
   
   const [desayunosManual, setDesayunosManual] = useState(0);
   const [almuerzosManual, setAlmuerzosManual] = useState(0);
   const [cenasManual, setCenasManual] = useState(0);
   const [nochesManual, setNochesManual] = useState(0);
+  const [filtroEstado, setFiltroEstado] = useState("Activo");
 
   const { logout, userData, checkingSession, hasPermiso } = useAuth();
 
@@ -240,6 +242,14 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
 
   const registrarViatico = async () => {
     if (!empleado || !cliente) { alert("Empleado y Cliente son obligatorios."); return; }
+    
+    // Nueva validación: Verificar que el cliente tenga un supervisor asignado
+    const clienteObj = clientes.find(c => c.nombre === cliente);
+    if (!clienteObj || !clienteObj.supervisor_id) {
+      alert("El cliente seleccionado no tiene un supervisor asignado. No se puede registrar el viático.");
+      return;
+    }
+
     if (conflictosDisponibilidad.length > 0) { alert("Hay conflictos de disponibilidad."); return; }
 
     const formatForDb = (value) => {
@@ -250,6 +260,7 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
       return base.length === 16 ? `${base}:00` : base;
     };
 
+    setCargandoRegistro(true);
     try {
       const empleadoObj = empleados.find(e => e.nombre === empleado);
       if (!empleadoObj) return;
@@ -280,10 +291,12 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
           alert("Viático registrado"); 
           limpiarFormulario(); 
           setShowModal(false);
+          if (onSuccess) onSuccess();
         } 
         else alert("Error al registrar");
       }
     } catch (err) { alert("Error de red"); }
+    finally { setCargandoRegistro(false); }
   };
 
   const handleLogout = useCallback(() => {
@@ -313,12 +326,14 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
       empleado, cliente, motivoViaje, origen, destino, salida, regreso, contarDesayuno, costoHospedaje,
       combustible, imprevistos, empleados, clientes, atms, cargandoEdicion, 
       conflictosDisponibilidad, verificandoDisponibilidad, rutaCoords, peajesCruzados,
-      costoPeajes, distanciaTotal, cargando, desayunosManual, almuerzosManual, cenasManual, nochesManual, isEditing, showModal
+      costoPeajes, distanciaTotal, cargando, cargandoRegistro, desayunosManual, almuerzosManual, cenasManual, nochesManual, isEditing, showModal, userData,
+      filtroEstado
     },
     setters: {
       setEmpleado, setCliente, setMotivoViaje, setOrigen, setDestino, setSalida, setRegreso, setContarDesayuno,
       setCostoHospedaje, setCombustible, setImprevistos, setDesayunosManual, setAlmuerzosManual,
-      setCenasManual, setNochesManual, handleCurrencyChange, setShowModal, toggleModal // <-- ¡Aquí agregamos toggleModal!
+      setCenasManual, setNochesManual, handleCurrencyChange, setShowModal, toggleModal, // <-- ¡Aquí agregamos toggleModal!
+      setFiltroEstado
     },
     calculos,
     handlers: { calcularRuta, registrarViatico, handleLogout, handleCloseModal }

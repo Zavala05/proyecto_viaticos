@@ -11,6 +11,23 @@ export default function PostUbicaciones({ onLocationAdded }) {
 
     const registrar_ubicacion = async (e) => {
         e.preventDefault();
+        setMensajeError("");
+        setMensajeExito("");
+
+        // Validaciones de coordenadas
+        const lat = parseFloat(latitud);
+        const lng = parseFloat(longitud);
+
+        if (isNaN(lat) || lat < -90 || lat > 90) {
+            setMensajeError("La latitud debe ser un número entre -90 y 90.");
+            return;
+        }
+
+        if (isNaN(lng) || lng < -180 || lng > 180) {
+            setMensajeError("La longitud debe ser un número entre -180 y 180.");
+            return;
+        }
+
         try {
             await crearubicacion(nombre, latitud, longitud);
             setMensajeExito("Ubicación registrada exitosamente.");

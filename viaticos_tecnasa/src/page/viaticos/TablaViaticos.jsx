@@ -1,36 +1,88 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom"; 
+import { useAuth } from "../../context/AuthContext.jsx";
 import { ObtenerViaticos } from "../../service/auth.service.js"; 
 import { exportToExcel } from "../../utils/exportToExcel.js";
-import "./ViaticosMapa.css"; 
+import "../../../public/styles/ViaticosMapa.css"; 
 
-export default function TablaViaticos() {
+export default function TablaViaticos({ filtroEstado = "Todos" }) {
     const [viaticos, setViaticos] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const [revertiendoId, setRevertiendoId] = useState(null);
     const navigate = useNavigate(); 
+    const { userData } = useAuth();
+    const isAdmin = (userData?.rol || "").toLowerCase() === "admin";
+    const API_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
+
+    const cargarViaticos = async () => {
+        setCargando(true);
+        try {
+            const res = await ObtenerViaticos();
+            let data = Array.isArray(res) ? res : [];
+
+            // Aplicar filtro si no es "Todos"
+            if (filtroEstado !== "Todos") {
+                data = data.filter(v => {
+                    // Normalizamos el valor de la BD: quitamos espacios y pasamos a minúsculas
+                    const estadoBD = (v.estado_viatico || "").trim().toLowerCase();
+                    
+                    if (filtroEstado === "Activo") {
+                        return estadoBD !== "cerrado";
+                    } 
+                    if (filtroEstado === "Cerrado") {
+                        return estadoBD === "cerrado";
+                    }
+                    return true;
+                });
+            }
+            
+            setViaticos(data);
+        } catch (error) {
+            console.error("Error al mostrar viáticos:", error);
+        } finally {
+            setCargando(false);
+        }
+    };
 
     useEffect(() => {
-        const cargarViaticos = async () => {
-            setCargando(true);
-            try {
-                const res = await ObtenerViaticos();
-                setViaticos(Array.isArray(res) ? res : []);
-            } catch (error) {
-                console.error("Error al mostrar viáticos:", error);
-            } finally {
-                setCargando(false);
-            }
-        };
         cargarViaticos();
-    }, []);
+    }, [filtroEstado]);
+
+    const handleRevertir = async (v) => {
+        if (!window.confirm(`¿Estás seguro de que deseas revertir la liquidación de ${v.nombre_empleado}? El estado pasará de 'Cerrado' a 'En progreso'.`)) {
+            return;
+        }
+
+        setRevertiendoId(v.id);
+        try {
+            const res = await fetch(`${API_URL}/liquidaciones/${v.liquidacion_id}/estado`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    estado: "En progreso",
+                    observaciones: "Liquidación revertida por administrador"
+                }),
+            });
+
+            if (res.ok) {
+                alert("Liquidación revertida correctamente.");
+                cargarViaticos();
+            } else {
+                const error = await res.json();
+                alert(error.message || "Error al revertir la liquidación.");
+            }
+        } catch (error) {
+            console.error("Error al revertir:", error);
+            alert("Error de red al intentar revertir.");
+        } finally {
+            setRevertiendoId(null);
+        }
+    };
 
     // Función para dar formato normal a la fecha y hora sin desfases de zona horaria
     const formatearFecha = (fecha) => {
         if (!fecha) return "N/A";
         
-        // El problema suele ser que 'new Date(fecha)' interpreta el string como UTC
-        // y lo convierte a la hora local del navegador, causando un desfase.
-        // Vamos a parsear el string directamente para mostrar exactamente lo que hay en la BD.
         try {
             // Esperamos "YYYY-MM-DD HH:mm:ss" o "YYYY-MM-DDTHH:mm:ss"
             const regex = /^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/;
@@ -68,9 +120,7 @@ export default function TablaViaticos() {
             ...v,
             motivoViaje: v.motivo_viaje,
             costo_hospedaje_diario: Number(v.costo_hospedaje || 0),
-            // Calculamos el total de hospedaje para el excel (noches * costo_diario)
             costo_hospedaje: Number(v.costo_hospedaje || 0) * (v.noches_count || 0),
-            // Aseguramos que los costos sean números
             costo_combustible: Number(v.costo_combustible || 0),
             costo_imprevistos: Number(v.costo_imprevistos || 0),
             costo_peajes: Number(v.costo_peajes || 0),
@@ -103,50 +153,71 @@ export default function TablaViaticos() {
                                 <th>Salida</th>
                                 <th>Regreso</th>
                                 <th>Total (Lps)</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {viaticos.length > 0 ? (
-                                viaticos.map((v) => (
-                                    <tr key={v.id}>
-                                        <td>{v.nombre_empleado}</td>
-                                        <td>{v.cliente}</td>
-                                        <td>{v.origen} ➝ {v.destino}</td>
-                                        
-                                        {/* APLICAMOS LA FUNCIÓN AQUÍ PARA LA FECHA Y HORA */}
-                                        <td>{formatearFecha(v.fecha_salida)}</td>
-                                        <td>{formatearFecha(v.fecha_regreso)}</td>
-                                        
-                                        <td style={{ fontWeight: "bold" }}>L. {v.total_general}</td>
-                                        <td>
-                                            <div style={{ display: "flex", gap: "8px" }}>
-                                                <button 
+                                viaticos.map((v) => {
+                                    // Evaluamos el estado de forma segura una sola vez por fila
+                                    const esCerrado = (v.estado_viatico || "").trim().toLowerCase() === "cerrado";
+
+                                    return (
+                                        <tr key={v.id}>
+                                            <td>{v.nombre_empleado}</td>
+                                            <td>{v.cliente}</td>
+                                            <td>{v.origen} ➝ {v.destino}</td>
+                                            <td>{formatearFecha(v.fecha_salida)}</td>
+                                            <td>{formatearFecha(v.fecha_regreso)}</td>
+                                            <td style={{ fontWeight: "bold" }}>L. {v.total_general}</td>
+                                            <td>
+                                                <span className="badge" style={{ 
+                                                    backgroundColor: esCerrado ? '#dcfce7' : (v.estado === 'Rechazada' ? '#fee2e2' : (v.estado === 'En revisión' || v.estado === 'Pendiente' ? '#fef3c7' : '#f1f5f9')), 
+                                                    color: esCerrado ? '#166534' : (v.estado === 'Rechazada' ? '#991b1b' : (v.estado === 'En revisión' || v.estado === 'Pendiente' ? '#92400e' : '#475569')), 
+                                                    border: `1px solid ${esCerrado ? '#bbf7d0' : (v.estado === 'Rechazada' ? '#fecaca' : (v.estado === 'En revisión' || v.estado === 'Pendiente' ? '#fde68a' : '#cbd5e1'))}` 
+                                                }}>
+                                                    {esCerrado ? 'Cerrado' : (v.estado || 'Activo')}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div style={{ display: "flex", gap: "8px" }}>
+                                                    <button 
                                                     className="btn btn-actionsviaticos"
-                                                    style={{ padding: "6px 12px", fontSize: "13px" }}
+                                                    style={{ 
+                                                        padding: "6px 12px", 
+                                                        fontSize: "13px",
+                                                        opacity: v.estado_viatico === 'Cerrado' ? 0.5 : 1,
+                                                        cursor: v.estado_viatico === 'Cerrado' ? 'not-allowed' : 'pointer'
+                                                    }}
                                                     onClick={() => {
+                                                        if (v.estado_viatico === 'Cerrado') return;
                                                         navigate(`/admin/dashboard/editar/${v.id}`);
                                                         window.scrollTo({ top: 0, behavior: 'smooth' });
                                                     }}
+                                                    disabled={v.estado_viatico === 'Cerrado'}
+                                                    title={v.estado_viatico === 'Cerrado' ? "No se puede editar un viático cerrado" : "Editar viático"}
                                                 >
                                                     Editar
                                                 </button>
-                                                <button 
-                                                    className="btn btn-actionsviaticos"
-                                                    style={{ padding: "6px 12px", fontSize: "13px" }}
-                                                    onClick={() => handleExportRow(v)}
-                                                >
-                                                    Exportar A Excel
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                                    <button 
+                                                        className="btn btn-actionsviaticos"
+                                                        style={{ padding: "6px 12px", fontSize: "13px" }}
+                                                        onClick={() => handleExportRow(v)}
+                                                    >
+                                                        Exportar A Excel
+                                                    </button>
+                                                   
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })
                             ) : (
                                 <tr>
-                                    <td colSpan="7" style={{ textAlign: "center", padding: "20px" }}>
-                                        No hay viáticos registrados
-                                    </td>
+                                    <td colSpan="8" style={{ textAlign: "center", padding: "20px" }}>
+                                         No hay viáticos registrados
+                                     </td>
                                 </tr>
                             )}
                         </tbody>

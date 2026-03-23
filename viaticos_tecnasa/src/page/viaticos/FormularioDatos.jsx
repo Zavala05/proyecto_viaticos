@@ -46,6 +46,8 @@ export default function FormularioDatos({ state, setters, handlers }) {
             value={state.motivoViaje}
             onChange={(e) => setters.setMotivoViaje(e.target.value)}
             style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
+            placeholder="Ej. Mantenimiento Preventivo"
+            required
           />
         </div>
 
@@ -63,6 +65,7 @@ export default function FormularioDatos({ state, setters, handlers }) {
             value={state.salida}
             onChange={(e) => setters.setSalida(e.target.value)}
             style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
+            required
           />
         </div>
         
@@ -74,6 +77,7 @@ export default function FormularioDatos({ state, setters, handlers }) {
             onChange={(e) => setters.setRegreso(e.target.value)}
             min={state.salida}
             style={{ width: "100%", padding: 8, boxSizing: "border-box" }}
+            required
           />
         </div>
 

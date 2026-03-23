@@ -5,7 +5,7 @@ import FormularioDatos from "./FormularioDatos";       // Componente hijo
 import MapaHonduras from "./MapaHonduras";             // Componente hijo
 import PanelResultados from "./PanelResultados";       // Componente hijo
 import TablaViaticos from "./TablaViaticos";
-import "./ViaticosMapa.css";
+import "../../../public/styles/ViaticosMapa.css";
 
 export default function ViaticosMapa({ setUser, User }) {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ export default function ViaticosMapa({ setUser, User }) {
     calculos,
     handlers
   } = useViaticosLogic(viaticosId, setUser);
+
+  const isAdmin = (state.userData?.rol || "").toLowerCase() === "admin";
 
   return (
     <div className="viaticos-container">
@@ -43,13 +45,32 @@ export default function ViaticosMapa({ setUser, User }) {
         <button className="btn btn-outline" onClick={() => navigate("/admin/ubicaciones")}>
           Ver Ubicaciones
         </button>
+        {isAdmin && (
+          <button className="btn btn-outline" onClick={() => navigate("/admin/viaticos/liquidaciones")}>
+            Ver Liquidaciones
+          </button>
+        )}
         <button className="btn btn-danger" onClick={handlers.handleLogout}>
           Logout
         </button>
       </div>
 
       {/* 2. Tabla de Viáticos (Debajo de los botones) */}
-      <TablaViaticos />
+      <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
+        <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Filtrar por estado:</label>
+        <select 
+          className="form-control" 
+          style={{ width: "200px", padding: "8px" }}
+          value={state.filtroEstado}
+          onChange={(e) => setters.setFiltroEstado(e.target.value)}
+        >
+          <option value="Todos">Todos</option>
+          <option value="Activo">Activos</option>
+          <option value="Cerrado">Cerrados</option>
+        </select>
+      </div>
+
+      <TablaViaticos filtroEstado={state.filtroEstado} />
 
       {/* 3. Modal de Formulario, Mapa y Resultados */}
       {state.showModal && (
@@ -115,12 +136,10 @@ export default function ViaticosMapa({ setUser, User }) {
                 className="btn btn-primarycancel" 
                 onClick={async () => {
                   await handlers.registrarViatico();
-                  // Si no hay errores, cerramos el modal (esto dependería de si registrarViatico es exitoso)
-                  // Por ahora lo dejamos que el usuario decida o que el Hook lo maneje
                 }}
-                disabled={state.cargandoEdicion || state.conflictosDisponibilidad.length > 0}
+                disabled={state.cargandoRegistro || state.cargandoEdicion || state.conflictosDisponibilidad.length > 0}
               >
-                {state.cargandoEdicion ? "Cargando..." : (state.isEditing ? "Editar" : "Guardar")}
+                {state.cargandoRegistro ? "Guardando..." : (state.cargandoEdicion ? "Cargando..." : (state.isEditing ? "Editar" : "Guardar"))}
               </button>
             </div>
           </div>

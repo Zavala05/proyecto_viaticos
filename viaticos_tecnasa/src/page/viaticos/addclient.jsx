@@ -11,27 +11,65 @@ export default function AddClient() {
     const [nombre, setNombre] = useState("");
     const [codigo, setCodigo] = useState("");
     const [descripcion, setDescripcion] = useState("");
+    const [supervisor_id, setSupervisorId] = useState(""); // Nuevo estado para supervisor
     const [estatus, setEstatus] = useState("Activo");
+    const [showempleado, setShowEmpleado] = useState([]); // Para cargar supervisores
     // Usamos este estado como "interruptor" para avisarle a ShowClients que se actualice
     const [refreshTrigger, setRefreshTrigger] = useState(0); 
     const navigate = useNavigate();
     const [mensajeError, setMensajeError] = useState("");
     const [mensajeExito, setMensajeExito] = useState("");
 
+    const cargar_supervisores = async () => {
+        try {
+            const res = await show();
+            // Filtrar solo usuarios que puedan ser supervisores si es necesario, o mostrar todos
+            setShowEmpleado(res);
+        } catch (error) {
+            console.error("Error al cargar supervisores:", error);
+        }
+    };
+
+    useEffect(() => {
+        cargar_supervisores();
+    }, []);
+
     const guardar_cliente = async (e) => {
         e.preventDefault();
+        setMensajeError("");
+        setMensajeExito("");
+
+        // Validar que el nombre solo contenga letras y espacios
+        const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!nombreRegex.test(nombre)) {
+            setMensajeError("El nombre del cliente solo debe contener letras.");
+            return;
+        }
+
+        // Validar que el código solo contenga números o letras sin caracteres raros
+        const codigoRegex = /^[a-zA-Z0-9-]+$/;
+        if (!codigoRegex.test(codigo)) {
+            setMensajeError("El código solo permite letras, números y guiones.");
+            return;
+        }
+
+        if (!supervisor_id) {
+            setMensajeError("Debes asignar un supervisor al cliente.");
+            return;
+        }
+
         try {
-            const res = await addclient(nombre, codigo, descripcion, estatus);
+            const res = await addclient(nombre, codigo, descripcion, estatus, supervisor_id);
             console.log("Respuesta del registro:", res);
             
             // Limpiamos los campos
             setNombre("");
             setCodigo("");
             setDescripcion("");
+            setSupervisorId("");
             
             // Disparamos la actualización de la tabla
             setRefreshTrigger(prev => prev + 1);
-            
             
             setMensajeExito("Cliente registrado exitosamente.");
         } catch(error) {
@@ -63,6 +101,24 @@ export default function AddClient() {
                             <div className="form-group">
                                 <label className="form-label" htmlFor="descripcion">Descripción</label>
                                 <input className="form-input" type="text" id="descripcion" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} required placeholder="Cliente corporativo..." />
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label" htmlFor="supervisor">Supervisor Responsable</label>
+                                <select 
+                                    className="form-input select-input" 
+                                    id="supervisor" 
+                                    value={supervisor_id} 
+                                    onChange={(e) => setSupervisorId(e.target.value)} 
+                                    required
+                                >
+                                    <option value="" disabled>-- Seleccione un supervisor --</option>
+                                    {showempleado.map((emp) => (
+                                        <option key={emp.id_usuario} value={emp.id_usuario}>
+                                            {emp.nombre}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 

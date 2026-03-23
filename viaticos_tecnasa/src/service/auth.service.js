@@ -70,12 +70,12 @@ export async function logout() {
   }
 }
 
-export async function register(nombre, email, username, password, rol, puesto) {
+export async function register(nombre, email, username, password, rol, puesto, supervisor_id) {
   const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ nombre, email, username, password, rol, puesto }),
+    body: JSON.stringify({ nombre, email, username, password, rol, puesto, supervisor_id }),
   });
   console.log("Respuesta del registro (raw):", res);
   if(res.ok){
@@ -267,10 +267,72 @@ export async function ObtenerViaticosByEmpleado(empleado_id){
 
     const result = await res.json();
     return result.data || []; 
-    
   } catch (error) {
     console.error("Error en la función ObtenerViaticosByEmpleado:", error);
     return [];
+  }
+}
+
+// OBTENER LIQUIDACIONES DEL EQUIPO (PARA SUPERVISORES)
+export async function ObtenerLiquidacionesEquipo() {
+  try {
+    const res = await fetch(`${API_URL}/liquidaciones/equipo`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al obtener liquidaciones del equipo: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    return result.data || [];
+  } catch (error) {
+    console.error("Error en la función ObtenerLiquidacionesEquipo:", error);
+    return [];
+  }
+}
+
+// OBTENER TODAS LAS LIQUIDACIONES (PARA FINANZAS / ADMIN)
+export async function ObtenerTodasLiquidaciones() {
+  try {
+    const res = await fetch(`${API_URL}/liquidaciones/todas`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al obtener todas las liquidaciones: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    return result.data || [];
+  } catch (error) {
+    console.error("Error en la función ObtenerTodasLiquidaciones:", error);
+    return [];
+  }
+}
+
+// APROBAR O RECHAZAR LIQUIDACIÓN
+export async function ActualizarEstadoLiquidacion(id, estado, observaciones = null) {
+  try {
+    const res = await fetch(`${API_URL}/liquidaciones/${id}/estado`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ estado, observaciones }),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al actualizar estado de liquidación: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error en la función ActualizarEstadoLiquidacion:", error);
+    throw error;
   }
 }
 
@@ -303,6 +365,28 @@ export async function VerificarDisponibilidad(empleado_id, fecha_salida, fecha_r
       disponible: true,
       conflictos: []
     };
+  }
+}
+
+//funcion para obtener mis viaticos
+// src/service/auth.service.js
+export async function getMisViaticos() {
+  try {
+    const res = await fetch(`${API_URL}/viaticos/mis-viaticos`, {
+      method: "GET",
+      headers: getAuthHeaders(),
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error al obtener mis viáticos: ${res.statusText}`);
+    }
+
+    const result = await res.json();
+    return result.data || [];
+  } catch (error) {
+    console.error("Error en getMisViaticos:", error);
+    return [];
   }
 }
 

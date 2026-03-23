@@ -12,18 +12,37 @@ export default function RegisterUser() {
     const [password, setPassword] = useState("");
     const [rol, setRol] = useState("Empleado"); 
     const [puesto, setPuesto] = useState("Tecnico ATM");
+    const [supervisor, setSupervisor] = useState("");
     const [showempleado, setShowEmpleado] = useState([]);
     const navigate = useNavigate();
     const [mensajeExito, setMensajeExito] = useState("");
     const [mensajeError, setMensajeError] = useState("");
 
     const guardar_usuario = async (e) => {
+        e.preventDefault();
+        setMensajeError("");
+        setMensajeExito("");
+
+        // Validar que el nombre solo contenga letras y espacios
+        const nombreRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+        if (!nombreRegex.test(nombre)) {
+            setMensajeError("El nombre solo debe contener letras.");
+            return;
+        }
+
+        // Validar formato de correo electrónico
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setMensajeError("Por favor, ingresa un formato de correo válido.");
+            return;
+        }
+
         try {
-            e.preventDefault();
-            const res = await register(nombre, email, usernmame, password, rol, puesto);
+            const res = await register(nombre, email, usernmame, password, rol, puesto, supervisor);
             console.log("Respuesta del registro:", res);
             mostrar_usuario();
             setNombre(""); setEmail(""); setUsername(""); setPassword("");
+            setSupervisor(""); // Limpiar supervisor tras éxito
             setMensajeExito("Usuario registrado exitosamente.");
              setTimeout(() => {
                 setMensajeExito("");
@@ -72,11 +91,11 @@ export default function RegisterUser() {
                         <div className="form-row">
                             <div className="form-group">
                                 <label className="form-label">Username</label>
-                                <input className="form-input" type="text" value={usernmame} onChange={(e) => setUsername(e.target.value)} required placeholder="jperez"/>
+                                <input className="form-input" type="text" value={usernmame} onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))} required placeholder="jperez"/>
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Password</label>
-                                <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••"/>
+                                <input className="form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" minLength={6}/>
                             </div>
                         </div>
 
@@ -85,7 +104,18 @@ export default function RegisterUser() {
                             <select className="form-input select-input" value={puesto} onChange={(e) => setPuesto(e.target.value)} required>
                                 <option value="Tecnico ATM">Técnico de ATM</option>
                                 <option value="Microsistemas">Microsistemas</option>
+                                <option value="Finanzas">Finanzas</option>
                             </select>
+                        </div>
+                        <div className="supervisor_select">
+                            <label className="form-label">Supervisor</label>
+                            <select className="form-input select-input" value={supervisor} onChange={(e) => setSupervisor(e.target.value)}>
+                                <option value="">Seleccione un supervisor (Opcional)</option>
+                                {showempleado.map((empleado) => (
+                                    <option key={empleado.id_usuario} value={empleado.id_usuario}>{empleado.nombre}</option>
+                                ))}
+                            </select>
+
                         </div>
                         
                         <button className="btn-primary" type="submit">Registrar Usuario</button>
@@ -109,6 +139,7 @@ export default function RegisterUser() {
                                     <th>Email</th>
                                     <th>Username</th>
                                     <th>Puesto</th>
+                                    <th>Supervisor</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,12 +148,15 @@ export default function RegisterUser() {
                                         <td>{usuario.nombre}</td>
                                         <td>{usuario.email}</td>
                                         <td>{usuario.username}</td>
-                                        <td><span className="badge">{usuario.puesto}</span></td>
+                                        <td><span className="badge">{usuario.puesto || "N/A"}</span></td>
+                                        <td style={{ fontStyle: usuario.supervisor_nombre ? "normal" : "italic", color: usuario.supervisor_nombre ? "inherit" : "#94a3b8" }}>
+                                            {usuario.supervisor_nombre || "Sin supervisor"}
+                                        </td>
                                     </tr>
                                 ))}
                                 {showempleado.length === 0 && (
                                     <tr>
-                                        <td colSpan="4" className="empty-state">No hay usuarios registrados aún.</td>
+                                        <td colSpan="5" className="empty-state">No hay usuarios registrados aún.</td>
                                     </tr>
                                 )}
                             </tbody>
