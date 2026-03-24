@@ -5,7 +5,7 @@ import { ObtenerViaticos } from "../../service/auth.service.js";
 import { exportToExcel } from "../../utils/exportToExcel.js";
 import "../../../public/styles/ViaticosMapa.css"; 
 
-export default function TablaViaticos({ filtroEstado = "Todos" }) {
+export default function TablaViaticos({ filtroEstado = "Todos", filtroFechaInicio = "", filtroFechaFin = "", busqueda = "" }) {
     const [viaticos, setViaticos] = useState([]);
     const [cargando, setCargando] = useState(true);
     const [revertiendoId, setRevertiendoId] = useState(null);
@@ -19,13 +19,13 @@ export default function TablaViaticos({ filtroEstado = "Todos" }) {
         try {
             const res = await ObtenerViaticos();
             let data = Array.isArray(res) ? res : [];
+            
+            console.log("Datos recibidos de viáticos:", data); // Para depuración
 
-            // Aplicar filtro si no es "Todos"
+            // 1. Filtrar por Estado
             if (filtroEstado !== "Todos") {
                 data = data.filter(v => {
-                    // Normalizamos el valor de la BD: quitamos espacios y pasamos a minúsculas
                     const estadoBD = (v.estado_viatico || "").trim().toLowerCase();
-                    
                     if (filtroEstado === "Activo") {
                         return estadoBD !== "cerrado";
                     } 
@@ -34,6 +34,37 @@ export default function TablaViaticos({ filtroEstado = "Todos" }) {
                     }
                     return true;
                 });
+            }
+
+            // 2. Filtrar por Rango de Fechas
+            if (filtroFechaInicio || filtroFechaFin) {
+                data = data.filter(v => {
+                    if (!v.fecha_salida) return false;
+                    
+                    // Solo tomamos la parte YYYY-MM-DD para comparar con el input date
+                    const fechaSalida = v.fecha_salida.substring(0, 10);
+                    
+                    let cumpleInicio = true;
+                    let cumpleFin = true;
+
+                    if (filtroFechaInicio) {
+                        cumpleInicio = fechaSalida >= filtroFechaInicio;
+                    }
+                    if (filtroFechaFin) {
+                        cumpleFin = fechaSalida <= filtroFechaFin;
+                    }
+
+                    return cumpleInicio && cumpleFin;
+                });
+            }
+
+            // 3. Filtrar por Búsqueda (Empleado o Cliente)
+            if (busqueda.trim()) {
+                const query = busqueda.toLowerCase().trim();
+                data = data.filter(v => 
+                    (v.nombre_empleado || "").toLowerCase().includes(query) ||
+                    (v.cliente || "").toLowerCase().includes(query)
+                );
             }
             
             setViaticos(data);
@@ -46,7 +77,7 @@ export default function TablaViaticos({ filtroEstado = "Todos" }) {
 
     useEffect(() => {
         cargarViaticos();
-    }, [filtroEstado]);
+    }, [filtroEstado, filtroFechaInicio, filtroFechaFin, busqueda]);
 
     const handleRevertir = async (v) => {
         if (!window.confirm(`¿Estás seguro de que deseas revertir la liquidación de ${v.nombre_empleado}? El estado pasará de 'Cerrado' a 'En progreso'.`)) {

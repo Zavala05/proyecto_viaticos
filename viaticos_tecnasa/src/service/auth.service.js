@@ -127,12 +127,12 @@ export async function getAtms() {
   }
 }
 
-export async function addclient(nombre, codigo, descripcion, estatus){
+export async function addclient(nombre, codigo, descripcion, estatus, supervisor_id){
   const res = await fetch(`${API_URL}/clientes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
-    body: JSON.stringify({ nombre, codigo, descripcion, estatus }),
+    body: JSON.stringify({ nombre, codigo, descripcion, estatus, supervisor_id }),
   });
   console.log("Respuesta del registro (raw):", res);
   if(res.ok){

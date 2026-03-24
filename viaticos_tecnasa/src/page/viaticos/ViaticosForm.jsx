@@ -56,21 +56,76 @@ export default function ViaticosMapa({ setUser, User }) {
       </div>
 
       {/* 2. Tabla de Viáticos (Debajo de los botones) */}
-      <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
-        <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Filtrar por estado:</label>
-        <select 
-          className="form-control" 
-          style={{ width: "200px", padding: "8px" }}
-          value={state.filtroEstado}
-          onChange={(e) => setters.setFiltroEstado(e.target.value)}
+      <div style={{ marginBottom: "15px", display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap", background: "#f8fafc", padding: "15px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+        
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flex: "1 1 300px" }}>
+          <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Buscar:</label>
+          <input 
+            type="text" 
+            className="form-control" 
+            placeholder="Empleado o Cliente..."
+            style={{ width: "100%", padding: "8px" }}
+            value={state.busqueda}
+            onChange={(e) => setters.setBusqueda(e.target.value)}
+          />
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Estado:</label>
+          <select 
+            className="form-control" 
+            style={{ width: "150px", padding: "8px" }}
+            value={state.filtroEstado}
+            onChange={(e) => setters.setFiltroEstado(e.target.value)}
+          >
+            <option value="Todos">Todos</option>
+            <option value="Activo">Activos</option>
+            <option value="Cerrado">Cerrados</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Desde:</label>
+          <input 
+            type="date" 
+            className="form-control" 
+            style={{ width: "160px", padding: "8px" }}
+            value={state.filtroFechaInicio}
+            onChange={(e) => setters.setFiltroFechaInicio(e.target.value)}
+          />
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <label style={{ fontWeight: "600", fontSize: "14px", color: "#475569" }}>Hasta:</label>
+          <input 
+            type="date" 
+            className="form-control" 
+            style={{ width: "160px", padding: "8px" }}
+            value={state.filtroFechaFin}
+            onChange={(e) => setters.setFiltroFechaFin(e.target.value)}
+          />
+        </div>
+
+        <button 
+          className="btn btn-outline" 
+          style={{ padding: "8px 15px", fontSize: "13px" }}
+          onClick={() => {
+            setters.setFiltroEstado("Activo");
+            setters.setFiltroFechaInicio("");
+            setters.setFiltroFechaFin("");
+            setters.setBusqueda("");
+          }}
         >
-          <option value="Todos">Todos</option>
-          <option value="Activo">Activos</option>
-          <option value="Cerrado">Cerrados</option>
-        </select>
+          Limpiar Filtros
+        </button>
       </div>
 
-      <TablaViaticos filtroEstado={state.filtroEstado} />
+      <TablaViaticos 
+        filtroEstado={state.filtroEstado} 
+        filtroFechaInicio={state.filtroFechaInicio}
+        filtroFechaFin={state.filtroFechaFin}
+        busqueda={state.busqueda}
+      />
 
       {/* 3. Modal de Formulario, Mapa y Resultados */}
       {state.showModal && (

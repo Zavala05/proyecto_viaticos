@@ -316,6 +316,8 @@ export default function LiquidacionesUsuario() {
                         <label style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>Desayuno (L.)</label>
                         <input 
                           type="number" 
+                          min="0"
+                          step="0.01"
                           className="form-control"
                           style={{ padding: "6px", fontSize: "13px" }}
                           value={dia.desayuno}
@@ -326,6 +328,8 @@ export default function LiquidacionesUsuario() {
                         <label style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>Almuerzo (L.)</label>
                         <input 
                           type="number" 
+                          min="0"
+                          step="0.01"
                           className="form-control"
                           style={{ padding: "6px", fontSize: "13px" }}
                           value={dia.almuerzo}
@@ -336,6 +340,8 @@ export default function LiquidacionesUsuario() {
                         <label style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>Cena (L.)</label>
                         <input 
                           type="number" 
+                          min="0"
+                          step="0.01"
                           className="form-control"
                           style={{ padding: "6px", fontSize: "13px" }}
                           value={dia.cena}
@@ -346,6 +352,8 @@ export default function LiquidacionesUsuario() {
                         <label style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>Hospedaje (L.)</label>
                         <input 
                           type="number" 
+                          min="0"
+                          step="0.01"
                           className="form-control"
                           style={{ padding: "6px", fontSize: "13px" }}
                           value={dia.hospedaje}

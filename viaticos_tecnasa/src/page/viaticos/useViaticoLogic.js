@@ -51,6 +51,9 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   const [cenasManual, setCenasManual] = useState(0);
   const [nochesManual, setNochesManual] = useState(0);
   const [filtroEstado, setFiltroEstado] = useState("Activo");
+  const [filtroFechaInicio, setFiltroFechaInicio] = useState("");
+  const [filtroFechaFin, setFiltroFechaFin] = useState("");
+  const [busqueda, setBusqueda] = useState("");
 
   const { logout, userData, checkingSession, hasPermiso } = useAuth();
 
@@ -243,10 +246,23 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
   const registrarViatico = async () => {
     if (!empleado || !cliente) { alert("Empleado y Cliente son obligatorios."); return; }
     
-    // Nueva validación: Verificar que el cliente tenga un supervisor asignado
-    const clienteObj = clientes.find(c => c.nombre === cliente);
-    if (!clienteObj || !clienteObj.supervisor_id) {
-      alert("El cliente seleccionado no tiene un supervisor asignado. No se puede registrar el viático.");
+    // Nueva validación: Verificar que el EMPLEADO tenga un supervisor asignado
+    const empleadoObj = empleados.find(e => e.nombre === empleado);
+    
+    // Log para depuración
+    console.log("Validando empleado para viático:", { 
+      empleado_buscado: empleado, 
+      empleado_encontrado: empleadoObj,
+      todos_los_empleados: empleados
+    });
+
+    if (!empleadoObj) {
+      alert("Error: No se encontró la información del empleado seleccionado.");
+      return;
+    }
+
+    if (!empleadoObj.supervisor_id) {
+      alert(`El empleado "${empleado}" no tiene un supervisor asignado en el sistema. Por favor, asigne un supervisor al usuario en la pantalla de "Registrar Usuario" antes de continuar.`);
       return;
     }
 
@@ -327,13 +343,13 @@ export const useViaticosLogic = (viaticosId, setUser, onSuccess) => {
       combustible, imprevistos, empleados, clientes, atms, cargandoEdicion, 
       conflictosDisponibilidad, verificandoDisponibilidad, rutaCoords, peajesCruzados,
       costoPeajes, distanciaTotal, cargando, cargandoRegistro, desayunosManual, almuerzosManual, cenasManual, nochesManual, isEditing, showModal, userData,
-      filtroEstado
+      filtroEstado, filtroFechaInicio, filtroFechaFin, busqueda
     },
     setters: {
       setEmpleado, setCliente, setMotivoViaje, setOrigen, setDestino, setSalida, setRegreso, setContarDesayuno,
       setCostoHospedaje, setCombustible, setImprevistos, setDesayunosManual, setAlmuerzosManual,
       setCenasManual, setNochesManual, handleCurrencyChange, setShowModal, toggleModal, // <-- ¡Aquí agregamos toggleModal!
-      setFiltroEstado
+      setFiltroEstado, setFiltroFechaInicio, setFiltroFechaFin, setBusqueda
     },
     calculos,
     handlers: { calcularRuta, registrarViatico, handleLogout, handleCloseModal }
